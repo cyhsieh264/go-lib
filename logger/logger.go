@@ -8,7 +8,8 @@ import (
 )
 
 type Logger struct {
-	Logger *logrus.Logger
+	Logger   *logrus.Logger
+	logLevel map[string]logrus.Level
 }
 
 var (
@@ -18,7 +19,17 @@ var (
 
 func GetLogger() *Logger {
 	once.Do(func() {
-		instance = &Logger{logrus.New()}
+		logLevel := map[string]logrus.Level{
+			"TRACE": logrus.TraceLevel,
+			"DEBUG": logrus.DebugLevel,
+			"INFO":  logrus.InfoLevel,
+			"WARN":  logrus.WarnLevel,
+			"ERROR": logrus.ErrorLevel,
+			"FATAL": logrus.FatalLevel,
+			"PANIC": logrus.PanicLevel,
+		}
+
+		instance = &Logger{logrus.New(), logLevel}
 	})
 
 	return instance
