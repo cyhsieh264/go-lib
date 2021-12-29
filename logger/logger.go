@@ -1,15 +1,13 @@
 package logger
 
 import (
-	"context"
 	"sync"
 
 	"github.com/sirupsen/logrus"
 )
 
 type Logger struct {
-	Logger   *logrus.Logger
-	logLevel map[string]logrus.Level
+	*logrus.Logger
 }
 
 var (
@@ -17,26 +15,12 @@ var (
 	instance *Logger
 )
 
-func GetLogger() *Logger {
-	once.Do(func() {
-		logLevel := map[string]logrus.Level{
-			"TRACE": logrus.TraceLevel,
-			"DEBUG": logrus.DebugLevel,
-			"INFO":  logrus.InfoLevel,
-			"WARN":  logrus.WarnLevel,
-			"ERROR": logrus.ErrorLevel,
-			"FATAL": logrus.FatalLevel,
-			"PANIC": logrus.PanicLevel,
-		}
+// TODO: set log level and implement custom log formatter
 
-		instance = &Logger{logrus.New(), logLevel}
+func New() *Logger {
+	once.Do(func() {
+		instance = &Logger{logrus.New()}
 	})
 
 	return instance
-}
-
-func (logger *Logger) WithReqId(ctx context.Context) *logrus.Entry {
-	entry := logger.Logger.WithContext(ctx)
-	entry = entry.WithField("req_id", ctx.Value("X-Request-ID"))
-	return entry
 }
